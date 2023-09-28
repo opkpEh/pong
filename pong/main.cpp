@@ -1,43 +1,84 @@
 #include "raylib.h"
 
+struct Ball
+{
+	float x, y, speedX, speedY, radius;
+
+	void Draw()
+	{
+		DrawCircle(int(x), int(y), radius, WHITE);
+
+	}
+
+};
+
+struct Paddle
+{
+	float x, y, speed, width, height;
+
+
+	void Draw()
+	{
+		DrawRectangle(x-width/2, y-height/2 , 10, 100, WHITE);
+	}
+};
+
 int main()
 {
 	InitWindow(800, 600, "Pong");
 	SetWindowState(FLAG_VSYNC_HINT);
 
-	float ballX, ballY, ballRadius, ballSpeedX, ballSpeedY;
+	Ball ball;
 
-	ballX = GetScreenWidth() / 2.0f;
-	ballY = GetScreenHeight() / 2.0f;
-	ballRadius = 5.0;
-	ballSpeedX = 300;
-	ballSpeedY = 300;
+	ball.x = GetScreenWidth() / 2.0f;
+	ball.y = GetScreenHeight() / 2.0f;
+	ball.radius = 5.0;
+	ball.speedX = 100;
+	ball.speedY = 300;
 
+	Paddle leftPaddle;
+
+	leftPaddle.x = 50;
+	leftPaddle.y = GetScreenHeight() / 2;
+	leftPaddle.width = 10;
+	leftPaddle.height = 100;
+	leftPaddle.speed = 500;
+
+	Paddle rightPaddle;
+
+	rightPaddle.x = GetScreenWidth() - 50;
+	rightPaddle.y = GetScreenHeight() / 2;
+	rightPaddle.width = 10;
+	rightPaddle.height = 100;
+	rightPaddle.speed = 500;
 
 
 	while (!WindowShouldClose())
 	{
-		ballX += ballSpeedX* GetFrameTime();
-		ballY += ballSpeedY* GetFrameTime();
+		ball.x += ball.speedX* GetFrameTime();
+		ball.y += ball.speedY* GetFrameTime();
 		
-		if (ballY < 0)
+		if (ball.y < 0)
 		{
-			ballY = 0;
-			ballSpeedY *= -1;
+			ball.y = 0;
+			ball.speedY *= -1;
 		}
 
-		if (ballY > GetScreenHeight())
+		if (ball.y > GetScreenHeight())
 		{
-			ballY = GetScreenHeight();
-			ballSpeedY *= -1;
+			ball.y = GetScreenHeight();
+			ball.speedY *= -1;
 		}
+
+		
 
 		BeginDrawing();
 			ClearBackground(BLACK);
 
-			DrawCircle(int(ballX), int(ballY), ballRadius, WHITE);
-			DrawRectangle(30, GetScreenHeight() / 2-50,10, 100, WHITE);
-			DrawRectangle(GetScreenWidth()-40 , GetScreenHeight() / 2 - 50, 10, 100, WHITE);
+			ball.Draw();
+			leftPaddle.Draw();
+			rightPaddle.Draw();
+
 			DrawFPS(10, 0);
 		EndDrawing();
 	}
