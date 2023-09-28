@@ -16,10 +16,14 @@ struct Paddle
 {
 	float x, y, speed, width, height;
 
+	Rectangle GetRect()
+	{
+		return Rectangle{ x - width / 2, y - height / 2 , 10, 100 };
+	}
 
 	void Draw()
 	{
-		DrawRectangle(x-width/2, y-height/2 , 10, 100, WHITE);
+		DrawRectangleRec(GetRect(), WHITE);
 	}
 };
 
@@ -88,6 +92,16 @@ int main()
 		if (IsKeyDown(KEY_DOWN))
 		{
 			rightPaddle.y += rightPaddle.speed * GetFrameTime();
+		}
+
+		if (CheckCollisionCircleRec(Vector2{ ball.x, ball.y }, ball.radius, rightPaddle.GetRect()))
+		{
+			ball.speedX *= -1;
+		}
+
+		if (CheckCollisionCircleRec(Vector2{ ball.x, ball.y }, ball.radius, leftPaddle.GetRect()))
+		{
+			ball.speedX *= -1;
 		}
 
 		BeginDrawing();
