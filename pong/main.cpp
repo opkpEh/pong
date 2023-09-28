@@ -29,7 +29,7 @@ struct Paddle
 
 int main()
 {
-	InitWindow(800, 600, "Pong");
+	InitWindow(800, 800, "Pong");
 	SetWindowState(FLAG_VSYNC_HINT);
 
 	Ball ball;
@@ -56,6 +56,7 @@ int main()
 	rightPaddle.height = 100;
 	rightPaddle.speed = 500;
 
+	const char* winnerText = nullptr;
 
 	while (!WindowShouldClose())
 	{
@@ -94,14 +95,44 @@ int main()
 			rightPaddle.y += rightPaddle.speed * GetFrameTime();
 		}
 
-		if (CheckCollisionCircleRec(Vector2{ ball.x, ball.y }, ball.radius, rightPaddle.GetRect()))
-		{
-			ball.speedX *= -1;
-		}
-
 		if (CheckCollisionCircleRec(Vector2{ ball.x, ball.y }, ball.radius, leftPaddle.GetRect()))
 		{
-			ball.speedX *= -1;
+			if (ball.speedX < 0) 
+			{
+				ball.speedX *= -1.1f;
+				ball.speedY = (ball.y - leftPaddle.y) / (leftPaddle.height / 2) * ball.speedX;
+			}
+			
+		}
+
+		if (CheckCollisionCircleRec(Vector2{ ball.x, ball.y }, ball.radius, rightPaddle.GetRect()))
+		{
+			if (ball.speedX > 0)
+			{
+				ball.speedX *= -1.1f;
+				ball.speedY = (ball.y - rightPaddle.y) / (rightPaddle.height / 2) * -ball.speedX;
+
+			}
+		}
+
+		if (ball.x < 0)
+		{
+			winnerText = "Right player Won!";
+
+		}
+
+		if (ball.x > GetScreenWidth())
+		{
+			winnerText = "Left player Won!";
+		}
+
+		if (winnerText && IsKeyPressed(KEY_SPACE))
+		{
+			ball.x = GetScreenWidth() / 2;
+			ball.y = GetScreenHeight() / 2;
+			ball.speedX = 300;
+			ball.speedY = 300;
+			winnerText = nullptr;
 		}
 
 		BeginDrawing();
@@ -110,6 +141,12 @@ int main()
 			ball.Draw();
 			leftPaddle.Draw();
 			rightPaddle.Draw();
+
+			if (winnerText)
+			{
+				int textWidth = MeasureText(winnerText, 60);
+				DrawText(winnerText, GetScreenWidth()/2- textWidth / 2, GetScreenHeight() / 2 - 30, 60, BLUE);
+			}
 
 			DrawFPS(10, 0);
 		EndDrawing();
