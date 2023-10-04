@@ -1,3 +1,4 @@
+// using raylib to create a game.
 #include "raylib.h"
 
 struct Ball
